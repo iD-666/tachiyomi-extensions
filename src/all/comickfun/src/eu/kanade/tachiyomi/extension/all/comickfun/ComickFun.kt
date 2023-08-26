@@ -93,8 +93,8 @@ abstract class ComickFun(
 
     /** Manga Search **/
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
-        val popularNewComics = filters.find { it is PopularNewComicsFilter } as PopularNewComicsFilter.getValue()
-        val mostViewed = filters.find { it is MostViewedFilter } as MostViewedFilter.getValue()
+        val popularNewComics = (filters.find { it is PopularNewComicsFilter } as PopularNewComicsFilter).getValue()
+        val mostViewed = (filters.find { it is MostViewedFilter } as MostViewedFilter).getValue()
         val sortFilter = filters.find { it is SortFilter } as SortFilter
         
         return when {
