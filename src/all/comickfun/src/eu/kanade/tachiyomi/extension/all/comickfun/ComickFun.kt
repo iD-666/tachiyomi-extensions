@@ -106,9 +106,9 @@ abstract class ComickFun(
                     .map(::searchMangaParse)
             }
             sortFilter.getValue() == "hot" -> {
-                client.newCall(popularNewComicsRequest(page, filters))
+                client.newCall(hotUpdatesRequest(page, filters))
                     .asObservableSuccess()
-                    .map(::popularNewComicsParse)
+                    .map(::hotUpdatesParse)
             }
             popularNewComics.state > 0 -> {
                 Observable.just(MangasPage(emptyList(), false))
@@ -122,7 +122,7 @@ abstract class ComickFun(
         }
     }
 
-    private fun popularNewComicsRequest(page: Int, filters: FilterList): Request {
+    private fun hotUpdatesRequest(page: Int, filters: FilterList): Request {
         val url = "$apiUrl/chapter?order=hot&accept_erotic_content=true&page=$page&tachiyomi=true".toHttpUrl().newBuilder().apply {
             filters.forEach { filter ->
                 if (filter is TypeFilter) {
@@ -143,11 +143,12 @@ abstract class ComickFun(
         return GET(url, headers)
     }
 
-    private fun popularNewComicsParse(response: Response): MangasPage {
-        val result = response.parseAs<List<SearchComic>>()
+    private fun hotUpdatesParse(response: Response): MangasPage {
+        val result: List<HotUpdate> = response.parseAs<List<HotUpdate>>()
+        val comics: List<SearchManga> = result.map { it.mdComics }
         return MangasPage(
-            result.map(SearchComic::toSManga),
-            hasNextPage = result.size >= limit
+            comics.map(SearchManga::toSManga),
+            hasNextPage = comics.size >= limit
         )
     }
     
