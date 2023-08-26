@@ -54,11 +54,11 @@ internal class ToYearFilter(name: String) : TextFilter(name.trim())
 internal class SortFilter(name: String, sortList: List<Pair<String, String>>, state: Int = 0) :
     SelectFilter(name, sortList, state)
 
-internal class PopularNewComicsFilter(name: String, statusList: List<Pair<String, String>>, state: Int = 0) :
-    SelectFilter(name, dayList, state)
+internal class PopularNewComicsFilter(name: String, dayList: List<Pair<String, String>>) :
+    SelectFilter(name, dayList)
 
-internal class MostViewedFilter(name: String, statusList: List<Pair<String, String>>, state: Int = 0) :
-    SelectFilter(name, dayList, state)
+internal class MostViewedFilter(name: String, dayList: List<Pair<String, String>>) :
+    SelectFilter(name, dayList)
 
 internal class StatusFilter(name: String, statusList: List<Pair<String, String>>, state: Int = 0) :
     SelectFilter(name, statusList, state)
