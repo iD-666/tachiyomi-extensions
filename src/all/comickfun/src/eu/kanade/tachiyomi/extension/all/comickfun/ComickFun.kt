@@ -113,7 +113,7 @@ abstract class ComickFun(
             popularNewComics.state > 0 -> {
                 val type = "newfollow"
                 val days = popularNewComics
-                client.newCall(trendingComicsRequest(type, days, filters)
+                client.newCall(trendingComicsRequest(type, days, filters))
                         .asObservableSuccess()
                         .map { response: Response ->
                             trendingComicsParse(response, days)
@@ -122,7 +122,7 @@ abstract class ComickFun(
             mostViewed.state > 0 -> {
                 val type = "trending"
                 val days = mostViewed
-                client.newCall(trendingComicsRequest(type, days, filters)
+                client.newCall(trendingComicsRequest(type, days, filters))
                         .asObservableSuccess()
                         .map { response: Response ->
                             trendingComicsParse(response, days)
