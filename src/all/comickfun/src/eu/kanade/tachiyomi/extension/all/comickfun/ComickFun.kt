@@ -133,7 +133,7 @@ abstract class ComickFun(
                             "kr" -> "manhwa"
                             else -> null
                         }
-                        if (type != null) addQueryParameter("comic_types", type)
+                        if (type != null) addQueryParameter("type", type)
                     }
                 }
             }
