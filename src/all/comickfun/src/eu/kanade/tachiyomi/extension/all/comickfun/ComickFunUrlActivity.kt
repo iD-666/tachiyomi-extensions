@@ -8,14 +8,22 @@ import android.util.Log
 import kotlin.system.exitProcess
 
 class ComickFunUrlActivity : Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val pathSegments = intent?.data?.pathSegments
-        if (pathSegments != null && pathSegments.size > 1) {
-            val slug = pathSegments[1]
+
+        if (pathSegments != null 
+            && pathSegments.size > 1 
+            && pathSegments[2] != "follows" 
+            && pathSegments[2] != "covers") {
+
+            val seriesId = pathSegments[1]
+
             val mainIntent = Intent().apply {
                 action = "eu.kanade.tachiyomi.SEARCH"
-                putExtra("query", "${ComickFun.SLUG_SEARCH_PREFIX}$slug")
+                putExtra("query", ComickFun.prefixIdSearch + seriesId)
                 putExtra("filter", packageName)
             }
 
@@ -25,7 +33,7 @@ class ComickFunUrlActivity : Activity() {
                 Log.e("ComickFunUrlActivity", e.toString())
             }
         } else {
-            Log.e("ComickFunUrlActivity", "could not parse uri from intent $intent")
+            Log.e("ComickFunUrlActivity", "Could not parse URI from intent $intent")
         }
 
         finish()

@@ -5,13 +5,13 @@ import eu.kanade.tachiyomi.source.model.FilterList
 
 fun getFilters(): FilterList {
     return FilterList(
-        Filter.Header(name = "The filter is ignored when using text search."),
         GenreFilter("Genre", getGenresList),
         DemographicFilter("Demographic", getDemographicList),
         TypeFilter("Type", getTypeList),
         SortFilter("Sort", getSortsList),
         StatusFilter("Status", getStatusList),
         CompletedFilter("Completely Scanlated?"),
+        TextSearchFilter("Text Search with Filters"),
         CreatedAtFilter("Created at", getCreatedAtList),
         MinimumFilter("Minimum Chapters"),
         Filter.Header("From Year, ex: 2010"),
@@ -24,6 +24,7 @@ fun getFilters(): FilterList {
 }
 
 /** Filters **/
+
 internal class GenreFilter(name: String, genreList: List<Pair<String, String>>) :
     Filter.Group<TriFilter>(name, genreList.map { TriFilter(it.first, it.second) })
 
@@ -37,14 +38,16 @@ internal class TypeFilter(name: String, typeList: List<Pair<String, String>>) :
 
 internal class CompletedFilter(name: String) : CheckBoxFilter(name)
 
+internal class TextSearchFilter(name: String) : CheckBoxFilter(name)
+
 internal class CreatedAtFilter(name: String, createdAtList: List<Pair<String, String>>) :
     SelectFilter(name, createdAtList)
 
-internal class MinimumFilter(name: String) : TextFilter(name)
+internal class MinimumFilter(name: String) : TextFilter(name.trim())
 
-internal class FromYearFilter(name: String) : TextFilter(name)
+internal class FromYearFilter(name: String) : TextFilter(name.trim())
 
-internal class ToYearFilter(name: String) : TextFilter(name)
+internal class ToYearFilter(name: String) : TextFilter(name.trim())
 
 internal class SortFilter(name: String, sortList: List<Pair<String, String>>, state: Int = 0) :
     SelectFilter(name, sortList, state)
@@ -162,6 +165,8 @@ private val getTypeList: List<Pair<String, String>> = listOf(
     Pair("Manga", "jp"),
     Pair("Manhwa", "kr"),
     Pair("Manhua", "cn"),
+    Pair("Manhua (Hong Kong)", "hk"),
+    Pair("English", "gb"),
 )
 
 private val getCreatedAtList: List<Pair<String, String>> = listOf(
@@ -175,12 +180,12 @@ private val getCreatedAtList: List<Pair<String, String>> = listOf(
 )
 
 private val getSortsList: List<Pair<String, String>> = listOf(
-    Pair("Most popular", "follow"),
     Pair("Most follows", "user_follow_count"),
     Pair("Most views", "view"),
     Pair("High rating", "rating"),
     Pair("Last updated", "uploaded"),
     Pair("Newest", "created_at"),
+    Pair("Follow", "follow"), //This sort is deprecated. New comics uses user_follow_count.
 )
 
 private val getStatusList: List<Pair<String, String>> = listOf(
