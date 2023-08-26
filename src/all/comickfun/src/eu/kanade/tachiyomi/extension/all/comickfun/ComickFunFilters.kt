@@ -189,9 +189,9 @@ private val getCreatedAtList: List<Pair<String, String>> = listOf(
 
 private val getDayList: List<Pair<String, String>> = listOf(
     Pair("", ""),
-    Pair("7 days", "180"),
-    Pair("1 month", "180"),
-    Pair("3 months", "180"),
+    Pair("7 days", "7"),
+    Pair("1 month", "30"),
+    Pair("3 months", "90"),
     Pair("6 months", "180"),
     Pair("9 months", "270"),
     Pair("1 year", "360"),
