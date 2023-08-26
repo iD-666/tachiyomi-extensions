@@ -93,6 +93,10 @@ abstract class ComickFun(
 
     /** Manga Search **/
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
+        val popularNewComics = filters.find { it is PopularNewComicsFilter } as PopularNewComicsFilter
+        val mostViewed = filters.find { it is MostViewedFilter } as MostViewedFilter
+        val sortFilter = filters.find { it is SortFilter } as SortFilter
+        
         return when {
             //url deep link
             query.startsWith(prefixIdSearch) -> {
@@ -100,6 +104,12 @@ abstract class ComickFun(
                 client.newCall(GET("$apiUrl/$slug?tachiyomi=true", headers))
                     .asObservableSuccess()
                     .map(::searchMangaParse)
+            }
+            sortFilter.getValue() == "hot" -> {
+            }
+            popularNewComics.state > 0 -> {
+            }
+            mostViewed.state > 0 -> {
             }
             else -> client.newCall(searchMangaRequest(page, query.trim(), filters))
                     .asObservableSuccess()
@@ -121,7 +131,7 @@ abstract class ComickFun(
                     }
                     is DemographicFilter -> it.state.filter { it.isIncluded() }.forEach { addQueryParameter("demographic", it.value) }
                     is TypeFilter -> it.state.filter { it.state }.forEach { addQueryParameter("country", it.value) }
-                    is SortFilter -> addQueryParameter("sort", it.getValue())
+                    is SortFilter -> if (it.getValue() != "hot") addQueryParameter("sort", it.getValue())
                     is StatusFilter -> if (it.state > 0) addQueryParameter("status", it.getValue())
                     is CreatedAtFilter -> if (it.state > 0) addQueryParameter("time", it.getValue())
                     is MinimumFilter -> if (it.state.isNotEmpty()) addQueryParameter("minimum", it.state)
