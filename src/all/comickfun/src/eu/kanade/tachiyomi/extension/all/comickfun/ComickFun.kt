@@ -111,8 +111,10 @@ abstract class ComickFun(
                     .map(::popularNewComicsParse)
             }
             popularNewComics.state > 0 -> {
+                Observable.just(MangasPage(emptyList(), false))
             }
             mostViewed.state > 0 -> {
+                Observable.just(MangasPage(emptyList(), false))
             }
             else -> client.newCall(searchMangaRequest(page, query.trim(), filters))
                     .asObservableSuccess()
@@ -137,6 +139,8 @@ abstract class ComickFun(
             }
             if (comickFunLang != "all") addQueryParameter("lang", comickFunLang)
         }.build()
+        
+        return GET(url, headers)
     }
 
     private fun popularNewComicsParse(response: Response): MangasPage {
