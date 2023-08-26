@@ -196,3 +196,8 @@ data class SearchComic(
         thumbnail_url = parseCover(cover, mdCovers)
     }
 }
+
+@Serializable
+data class HotUpdate(
+    @SerialName("md_comics") val mdComics: SearchManga,
+)
