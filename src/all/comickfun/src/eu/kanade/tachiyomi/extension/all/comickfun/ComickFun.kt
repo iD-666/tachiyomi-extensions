@@ -106,6 +106,9 @@ abstract class ComickFun(
                     .map(::searchMangaParse)
             }
             sortFilter.getValue() == "hot" -> {
+                client.newCall(popularNewComicsRequest(page, filters))
+                    .asObservableSuccess()
+                    .map(::popularNewComicsParse)
             }
             popularNewComics.state > 0 -> {
             }
@@ -115,6 +118,33 @@ abstract class ComickFun(
                     .asObservableSuccess()
                     .map(::searchMangaParse)
         }
+    }
+
+    private fun popularNewComicsRequest(page: Int, filters: FilterList): Request {
+        val url = "$apiUrl/chapter?order=hot&accept_erotic_content=true&page=$page&tachiyomi=true".toHttpUrl().newBuilder().apply {
+            filters.forEach { filter ->
+                if (filter is TypeFilter) {
+                    filter.state.filter { it.state }.forEach { typeFilter ->
+                        val type = when (typeFilter.value) {
+                            "jp" -> "manga"
+                            "cn" -> "manhua"
+                            "kr" -> "manhwa"
+                            else -> null
+                        }
+                        if (type != null) addQueryParameter("comic_types", type)
+                    }
+                }
+            }
+            if (comickFunLang != "all") addQueryParameter("lang", comickFunLang)
+        }.build()
+    }
+
+    private fun popularNewComicsParse(response: Response): MangasPage {
+        val result = response.parseAs<List<SearchComic>>()
+        return MangasPage(
+            result.map(SearchComic::toSManga),
+            hasNextPage = result.size >= limit
+        )
     }
     
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
