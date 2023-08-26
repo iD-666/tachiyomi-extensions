@@ -98,7 +98,7 @@ abstract class ComickFun(
         val sortFilter = filters.find { it is SortFilter } as SortFilter
         
         return when {
-            //url deep link
+            // url deep link
             query.startsWith(prefixIdSearch) -> {
                 val slug = query.removePrefix(prefixIdSearch)
                 client.newCall(GET("$apiUrl/$slug?tachiyomi=true", headers))
