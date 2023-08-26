@@ -93,8 +93,8 @@ abstract class ComickFun(
 
     /** Manga Search **/
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
-        val popularNewComics = filters.find { it is PopularNewComicsFilter } as PopularNewComicsFilter
-        val mostViewed = filters.find { it is MostViewedFilter } as MostViewedFilter
+        val popularNewComics = filters.find { it is PopularNewComicsFilter } as PopularNewComicsFilter.getValue()
+        val mostViewed = filters.find { it is MostViewedFilter } as MostViewedFilter.getValue()
         val sortFilter = filters.find { it is SortFilter } as SortFilter
         
         return when {
@@ -111,15 +111,71 @@ abstract class ComickFun(
                     .map(::hotUpdatesParse)
             }
             popularNewComics.state > 0 -> {
-                Observable.just(MangasPage(emptyList(), false))
+                val type = "newfollow"
+                val days = popularNewComics
+                client.newCall(trendingComicsRequest(type, days, filters)
+                        .asObservableSuccess()
+                        .map { response: Response ->
+                            trendingComicsParse(response, days)
+                        }
             }
             mostViewed.state > 0 -> {
-                Observable.just(MangasPage(emptyList(), false))
+                val type = "trending"
+                val days = mostViewed
+                client.newCall(trendingComicsRequest(type, days, filters)
+                        .asObservableSuccess()
+                        .map { response: Response ->
+                            trendingComicsParse(response, days)
+                        }
             }
             else -> client.newCall(searchMangaRequest(page, query.trim(), filters))
                     .asObservableSuccess()
                     .map(::searchMangaParse)
         }
+    }
+
+    private fun trendingComicsRequest(type: String, days: String, filters: FilterList): Request {
+        val range = when (days) {
+            "270" -> "270"
+            "360" -> "360"
+            "720" -> "720"
+            else -> "180"
+        }
+        val url = "$apiUrl/top?type=$type&accept_mature_content=true&tachiyomi=true".toHttpUrl().newBuilder().apply {
+            filters.forEach { filter ->
+                if (filter is TypeFilter) {
+                    filter.state.filter { it.state }.forEach { typeFilter ->
+                        val type = when (typeFilter.value) {
+                            "jp" -> "manga"
+                            "cn" -> "manhua"
+                            "kr" -> "manhwa"
+                            else -> null
+                        }
+                        if (type != null) addQueryParameter("comic_types", type)
+                    }
+                }
+            }
+            addQueryParameter("day", range)
+        }.build()
+        
+        return GET(url, headers)
+    }
+
+    private fun trendingComicsParse(response: Response, days: String) {
+        val result = response.parseAs<DayList>()
+        val comics: List<SearchComic> = when (days) {
+            "7" -> result.oneWeek
+            "30" -> result.oneMonth
+            "90" -> result.threeMonths
+            "180" -> result.sixMonths
+            "270" -> result.nineMonths
+            "360" -> result.oneYear 
+            else -> result.twoYears
+        }
+        return MangasPage(
+            comics.map(SearchComic::toSManga),
+            hasNextPage = comics.size >= limit
+        )
     }
 
     private fun hotUpdatesRequest(page: Int, filters: FilterList): Request {
