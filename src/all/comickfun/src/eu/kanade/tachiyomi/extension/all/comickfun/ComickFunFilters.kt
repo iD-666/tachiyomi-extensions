@@ -202,6 +202,7 @@ private val getSortsList: List<Pair<String, String>> = listOf(
     Pair("Most follows", "user_follow_count"),
     Pair("Most views", "view"),
     Pair("High rating", "rating"),
+    Pair("Hot updates", "hot"),
     Pair("Last updated", "uploaded"),
     Pair("Newest", "created_at"),
     Pair("Follow", "follow"), //This sort is deprecated. New comics uses user_follow_count.
