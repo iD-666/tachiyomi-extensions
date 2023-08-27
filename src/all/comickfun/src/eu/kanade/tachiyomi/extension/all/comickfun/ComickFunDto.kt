@@ -171,3 +171,33 @@ data class ChapterPageData(
 data class Page(
     val url: String? = null,
 )
+
+@Serializable
+data class DayList(
+    @SerialName("7") val oneWeek: List<SearchComic> = emptyList(),
+    @SerialName("30") val oneMonth: List<SearchComic> = emptyList(),
+    @SerialName("90") val threeMonths: List<SearchComic> = emptyList(),
+    @SerialName("180") val sixMonths: List<SearchComic> = emptyList(),
+    @SerialName("270") val nineMonths: List<SearchComic> = emptyList(),
+    @SerialName("360") val oneYear: List<SearchComic> = emptyList(),
+    @SerialName("720") val twoYears: List<SearchComic> = emptyList(),
+)
+
+@Serializable
+data class SearchComic(
+    val title: String,
+    val slug: String,
+    @SerialName("md_covers") val mdCovers: List<MDcovers> = emptyList(),
+    @SerialName("cover_url") val cover: String? = null,
+) {
+    fun toSManga() = SManga.create().apply {
+        url = "/comic/$slug"
+        title = this@SearchComic.title
+        thumbnail_url = parseCover(cover, mdCovers)
+    }
+}
+
+@Serializable
+data class HotUpdate(
+    @SerialName("md_comics") val mdComics: SearchManga,
+)

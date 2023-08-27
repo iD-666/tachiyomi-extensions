@@ -9,6 +9,8 @@ fun getFilters(): FilterList {
         DemographicFilter("Demographic", getDemographicList),
         TypeFilter("Type", getTypeList),
         SortFilter("Sort", getSortsList),
+        PopularNewComicsFilter("Popular New Comics", getDayList),
+        MostViewedFilter("Most Viewed", getDayList),
         StatusFilter("Status", getStatusList),
         CompletedFilter("Completely Scanlated?"),
         TextSearchFilter("Text Search with Filters"),
@@ -51,6 +53,12 @@ internal class ToYearFilter(name: String) : TextFilter(name.trim())
 
 internal class SortFilter(name: String, sortList: List<Pair<String, String>>, state: Int = 0) :
     SelectFilter(name, sortList, state)
+
+internal class PopularNewComicsFilter(name: String, dayList: List<Pair<String, String>>) :
+    SelectFilter(name, dayList)
+
+internal class MostViewedFilter(name: String, dayList: List<Pair<String, String>>) :
+    SelectFilter(name, dayList)
 
 internal class StatusFilter(name: String, statusList: List<Pair<String, String>>, state: Int = 0) :
     SelectFilter(name, statusList, state)
@@ -179,10 +187,22 @@ private val getCreatedAtList: List<Pair<String, String>> = listOf(
     Pair("1 year", "365"),
 )
 
+private val getDayList: List<Pair<String, String>> = listOf(
+    Pair("", ""),
+    Pair("7 days", "7"),
+    Pair("1 month", "30"),
+    Pair("3 months", "90"),
+    Pair("6 months", "180"),
+    Pair("9 months", "270"),
+    Pair("1 year", "360"),
+    Pair("2 years", "720"),
+)
+
 private val getSortsList: List<Pair<String, String>> = listOf(
     Pair("Most follows", "user_follow_count"),
     Pair("Most views", "view"),
     Pair("High rating", "rating"),
+    Pair("Hot updates", "hot"),
     Pair("Last updated", "uploaded"),
     Pair("Newest", "created_at"),
     Pair("Follow", "follow"), //This sort is deprecated. New comics uses user_follow_count.
