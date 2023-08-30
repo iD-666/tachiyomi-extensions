@@ -15,6 +15,7 @@ internal fun String.beautifyDescription(): String {
         .replace(markdownLinksRegex, "")
         .replace(markdownItalicBoldRegex, "")
         .replace(markdownItalicRegex, "")
+        .replace("\\", "")
         .trim()
 }
 
