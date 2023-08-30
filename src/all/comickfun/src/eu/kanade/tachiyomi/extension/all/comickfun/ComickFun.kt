@@ -300,7 +300,7 @@ abstract class ComickFun(
                 timeZone = TimeZone.getTimeZone("UTC")
             }
         }
-        val markdownLinksRegex = "\\[([^]]+)\\]\\(([^)]+)\\)".toRegex()
+        val markdownLinksRegex = "\\[([^]]+)\\]\\(([^)]+)\\)(,|.)?".toRegex()
         val markdownItalicBoldRegex = "\\*+\\s*([^\\*]*)\\s*\\*+".toRegex()
         val markdownItalicRegex = "_+\\s*([^_]*)\\s*_+".toRegex()
     }
